@@ -1,0 +1,20 @@
+name: phoenix_socket_client
+description: A Very Good Project created by Very Good CLI.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  callback_observable:
+    git:
+      url: https://github.com/lumpsoid/callback_observable_dart
+  socket_client:
+    git:
+      url: https://github.com/lumpsoid/socket_client_dart
+
+dev_dependencies:
+  mocktail: ^1.0.5
+  test: ^1.31.0
+  very_good_analysis: ^10.2.0
