@@ -1,0 +1,5 @@
+exclude_tags: integration
+
+presets:
+  phoenix_test_server:
+    include_tags: integration

@@ -90,6 +90,7 @@ class PhoenixChannel {
       _transitionTo(PhoenixChannelState.joined);
       return reply.replyResponse;
     } on PhoenixChannelException {
+      _transitionTo(PhoenixChannelState.errored);
       rethrow;
     } on Exception catch (e) {
       _transitionTo(PhoenixChannelState.errored);
