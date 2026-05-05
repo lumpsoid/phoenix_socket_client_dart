@@ -1,11 +1,10 @@
-import 'package:phoenix_socket_client/src/phoenix_codec.dart';
 import 'package:phoenix_socket_client/src/phoenix_message.dart';
 import 'package:socket_client/socket_client.dart';
 
 class PhoenixHeartbeatPingBuilder
     extends FrameHeartbeatPingBuilder<PhoenixMessage> {
   PhoenixHeartbeatPingBuilder({
-    required PhoenixCodec codec,
+    required FrameCodec<PhoenixMessage> codec,
     required RefGenerator refGen,
   }) : _refGen = refGen,
        super(codec: codec);
