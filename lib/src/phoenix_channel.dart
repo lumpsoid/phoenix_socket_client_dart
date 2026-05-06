@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:phoenix_socket_client/src/phoenix_channel_state.dart';
 import 'package:phoenix_socket_client/src/phoenix_message.dart';
 import 'package:socket_client/socket_client.dart';
@@ -40,8 +39,11 @@ class PhoenixChannel {
   PhoenixChannelState _state = PhoenixChannelState.closed;
   String? _joinRef;
 
-  StreamSubscription<PhoenixMessage>? _routerSub;
+  /// Cached in-flight join future. All concurrent [join] callers share this
+  /// until it resolves or rejects, preventing duplicate phx_join messages.
+  Completer<Map<String, dynamic>>? _joinCompleter;
 
+  StreamSubscription<PhoenixMessage>? _routerSub;
   final _stateController = StreamController<ChannelStateChange>.broadcast();
   final _messageController = StreamController<PhoenixMessage>.broadcast();
 
@@ -59,11 +61,47 @@ class PhoenixChannel {
   Stream<PhoenixMessage> get allFrames =>
       _client.allFrames.where((f) => f.topic == topic);
 
+  /// Joins the channel.
+  ///
+  /// Idempotent: if the channel is already joined, returns immediately.
+  /// If a join is already in progress, all callers share the same [Future]
+  /// — only one `phx_join` message is ever sent per join attempt.
   Future<Map<String, dynamic>> join({
     Duration timeout = const Duration(seconds: 10),
-  }) async {
-    if (_state == PhoenixChannelState.joined) return const {};
+  }) {
+    // Already joined — nothing to do.
+    if (_state == PhoenixChannelState.joined) return Future.value(const {});
 
+    // Join in flight — return the shared future so this caller waits on the
+    // same handshake without sending a second phx_join.
+    if (_joinCompleter != null) return _joinCompleter!.future;
+
+    // Start a new join attempt.
+    final completer = Completer<Map<String, dynamic>>();
+    _joinCompleter = completer;
+
+    unawaited(
+      _doJoin(timeout: timeout).then(
+        (payload) {
+          final c = _joinCompleter;
+          if (c == null) return;
+          _joinCompleter = null;
+          c.complete(payload);
+        },
+        onError: (Object error, StackTrace stack) {
+          final c = _joinCompleter;
+          if (c == null) return;
+          _joinCompleter = null;
+          c.completeError(error, stack);
+        },
+      ),
+    );
+
+    return completer.future;
+  }
+
+  /// Performs the actual join handshake. Only ever called once per attempt.
+  Future<Map<String, dynamic>> _doJoin({required Duration timeout}) async {
     _transitionTo(PhoenixChannelState.joining);
     _joinRef = _refGen.next();
 
@@ -77,7 +115,6 @@ class PhoenixChannel {
 
     try {
       final reply = await _client.request(joinMsg, timeout: timeout);
-
       if (reply.isErrorReply) {
         _transitionTo(PhoenixChannelState.errored, error: reply.replyResponse);
         throw PhoenixChannelException(
@@ -86,7 +123,6 @@ class PhoenixChannel {
           payload: reply.replyResponse,
         );
       }
-
       _transitionTo(PhoenixChannelState.joined);
       return reply.replyResponse;
     } on PhoenixChannelException {
@@ -104,7 +140,6 @@ class PhoenixChannel {
     Duration timeout = const Duration(seconds: 10),
   }) async {
     _assertJoined();
-
     final msg = PhoenixMessage(
       joinRef: _joinRef,
       ref: _refGen.next(),
@@ -112,9 +147,7 @@ class PhoenixChannel {
       event: event,
       payload: payload,
     );
-
     final reply = await _client.request(msg, timeout: timeout);
-
     if (reply.isErrorReply) {
       throw PhoenixChannelException(
         'Push "$event" rejected',
@@ -122,7 +155,6 @@ class PhoenixChannel {
         payload: reply.replyResponse,
       );
     }
-
     return reply.replyResponse;
   }
 
@@ -140,7 +172,6 @@ class PhoenixChannel {
 
   Future<void> leave({Duration timeout = const Duration(seconds: 5)}) async {
     if (_state == PhoenixChannelState.closed) return;
-
     try {
       await _client.request(
         PhoenixMessage(
