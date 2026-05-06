@@ -13,7 +13,9 @@ abstract final class TestClientFactory {
   static PhoenixClient create({String? url, HeartbeatConfig? heartbeat}) {
     final refGen = SequentialRefGenerator();
     return PhoenixClient(
-      config: PhoenixConnectionConfig(url: url ?? kPhoenixTestUrl),
+      config: ConstantConfigProvider(
+        PhoenixConnectionConfig(url: url ?? kPhoenixTestUrl),
+      ),
       refGen: refGen,
       heartbeatConfig: heartbeat ?? const HeartbeatConfig(),
     );

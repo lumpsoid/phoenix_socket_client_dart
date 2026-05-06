@@ -5,13 +5,16 @@ import 'package:socket_client/socket_client.dart' show SocketClient;
 
 export 'package:socket_client/socket_client.dart'
     show
+        ConnectionConfigProvider,
+        ConstantConfigProvider,
         FrameCodec,
         FrameDecodeException,
         IntervalFramedHeartbeat,
         MonotonicRefGenerator,
         RefGenerator,
         SocketClient,
-        SocketHeartbeat;
+        SocketHeartbeat,
+        SwappableConfigProvider;
 
 export 'src/phoenix_channel.dart';
 export 'src/phoenix_channel_state.dart';

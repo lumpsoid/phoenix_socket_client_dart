@@ -1,5 +1,4 @@
 import 'package:phoenix_socket_client/src/phoenix_codec.dart';
-import 'package:phoenix_socket_client/src/phoenix_connection_config.dart';
 import 'package:phoenix_socket_client/src/phoenix_heartbeat_ping_builder.dart';
 import 'package:phoenix_socket_client/src/phoenix_message.dart';
 import 'package:socket_client/socket_client.dart';
@@ -10,7 +9,7 @@ import 'package:socket_client/socket_client.dart';
 class PhoenixClient extends DefaultSocketClient<PhoenixMessage> {
   /// {macro phoenix_client}
   PhoenixClient({
-    required PhoenixConnectionConfig super.config,
+    required super.config,
     required RefGenerator refGen,
     HeartbeatConfig heartbeatConfig = const HeartbeatConfig(),
     super.codec = const PhoenixCodec(),
