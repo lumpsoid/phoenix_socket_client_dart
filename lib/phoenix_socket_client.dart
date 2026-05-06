@@ -3,6 +3,16 @@ library;
 
 import 'package:socket_client/socket_client.dart' show SocketClient;
 
+export 'package:socket_client/socket_client.dart'
+    show
+        FrameCodec,
+        FrameDecodeException,
+        IntervalFramedHeartbeat,
+        MonotonicRefGenerator,
+        RefGenerator,
+        SocketClient,
+        SocketHeartbeat;
+
 export 'src/phoenix_channel.dart';
 export 'src/phoenix_channel_state.dart';
 export 'src/phoenix_client.dart';
