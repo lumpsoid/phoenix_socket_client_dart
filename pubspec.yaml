@@ -1,6 +1,6 @@
 name: phoenix_socket_client
 description: A Very Good Project created by Very Good CLI.
-version: 0.3.1
+version: 0.3.2
 publish_to: none
 
 environment:
@@ -11,9 +11,9 @@ dependencies:
     git:
       url: https://github.com/lumpsoid/callback_observable_dart
   socket_client:
-    version: ^0.2.0
     git:
       url: https://github.com/lumpsoid/socket_client_dart
+      ref: "40fb3dd0b6b20bda5233ba25ad9b71237cdf7983"
 
 dev_dependencies:
   mocktail: ^1.0.5
