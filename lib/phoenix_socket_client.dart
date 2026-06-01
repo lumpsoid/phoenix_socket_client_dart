@@ -13,6 +13,7 @@ export 'package:socket_client/socket_client.dart'
         MonotonicRefGenerator,
         RefGenerator,
         SocketClient,
+        SocketConnectionState,
         SocketHeartbeat,
         SwappableConfigProvider;
 
