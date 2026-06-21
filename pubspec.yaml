@@ -10,6 +10,7 @@ dependencies:
   callback_observable:
     git:
       url: https://github.com/lumpsoid/callback_observable_dart
+      ref: "22de0b1d944eb042a1a02f537353ad1ee4d23d2b"
   socket_client:
     git:
       url: https://github.com/lumpsoid/socket_client_dart
