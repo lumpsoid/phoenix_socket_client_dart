@@ -14,7 +14,7 @@ dependencies:
   socket_client:
     git:
       url: https://github.com/lumpsoid/socket_client_dart
-      ref: "e1ddffd19886f7db86292f2a44882612aca9c9f1"
+      ref: "5116f1962f731fc2523e2e68f652d23c5f90257e"
 
 dev_dependencies:
   mocktail: ^1.0.5
