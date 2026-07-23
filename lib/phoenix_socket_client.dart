@@ -14,6 +14,8 @@ export 'package:socket_client/socket_client.dart'
         RefGenerator,
         SocketClient,
         SocketConnectionState,
+        SocketError,
+        SocketErrorType,
         SocketHeartbeat,
         SwappableConfigProvider;
 
